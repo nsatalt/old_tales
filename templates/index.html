@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>昔話AIおばあちゃん</title>
+</head>
+<body>
+    <h1>おばあちゃんのお話を聴く</h1>
+    <button id="generate">おばあちゃんボタン</button>
+    <div id="story"></div>
+    <audio id="audio" controls></audio>
+
+    <script>
+        document.getElementById('generate').addEventListener('click', async () => {
+            const response = await fetch('/generate-story', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: '盛岡にまつわる昔話をしてください' })
+            });
+            const data = await response.json();
+            document.getElementById('story').innerText = data.story;
+            const audio = document.getElementById('audio');
+            audio.src = data.audioUrl;
+            audio.play();
+        });
+    </script>
+</body>
+</html>
