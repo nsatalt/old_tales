@@ -4,10 +4,8 @@ import time
 from openai import OpenAI
 from gtts import gTTS
 
-
 # ChatGPT APIキー
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 
 app = Flask(__name__)
 
@@ -19,11 +17,26 @@ def index():
 
 @app.route("/generate-story", methods=["POST"])
 def generate_story():
-    prompt = request.json.get("prompt", "盛岡にまつわる昔話をしてください")
+    # フロントエンドからのデータを取得（祖先情報と気分）
+    ancestor = request.json.get("ancestor", "あなたの祖先")
+    mood = request.json.get("mood", "普通")
+
+    # 気分に基づいたプロンプトの変更
+    if mood == "楽しい":
+        prompt_mood = "楽しい"
+    elif mood == "悲しい":
+        prompt_mood = "少し悲しい"
+    else:
+        prompt_mood = "普通"
+
+    # プロンプトの生成
+    prompt = f"あなたは私のおばあちゃんの設定で、８００字以内で盛岡にまつわる昔話を、実際の盛岡の地名を加え、{ancestor}が登場する形で{prompt_mood}トーンで話してください。"
 
     # ChatGPTに物語を生成させる
-    response = client.completions.create(engine="text-davinci-003", prompt=prompt, max_tokens=150)
-    story = response.choices[0].text.strip()
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}], max_tokens=800
+    )
+    story = response.choices[0].message.content.strip()
 
     # 物語を音声に変換する
     tts = gTTS(text=story, lang="ja")
@@ -31,7 +44,7 @@ def generate_story():
     filepath = os.path.join("static", filename)
     tts.save(filepath)
 
-    return jsonify({"story": story, "audioUrl": filepath})
+    return jsonify({"story": story, "audioUrl": f"/static/{filename}"})
 
 
 if __name__ == "__main__":

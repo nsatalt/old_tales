@@ -4,27 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>昔話AIおばあちゃん</title>
+    <style>
+        /* ローディングスピナーのスタイル */
+        #loading {
+            display: none;
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* おばあちゃんのイラスト */
+        #grandma {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* おばあちゃんが話しているときのアニメーション */
+        .talking {
+            animation: talking 0.5s infinite alternate;
+        }
+
+        @keyframes talking {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>おばあちゃんのお話を聴く</h1>
+    
+    <!-- 祖先と気分の入力フォーム -->
+    <label for="ancestor">祖先を入力してください（例: おじいちゃん、太郎さん）:</label>
+    <input type="text" id="ancestor" placeholder="祖先の名前">
+    
+    <label for="mood">気分を選んでください:</label>
+    <select id="mood">
+        <option value="普通">普通</option>
+        <option value="楽しい">楽しい</option>
+        <option value="悲しい">悲しい</option>
+    </select>
+    
     <button id="generate">おばあちゃんボタン</button>
+    
+    <!-- ローディングスピナーとメッセージ -->
+    <div id="loading"></div>
+    <div id="message"></div>
+    
+    <!-- おばあちゃんのイラストと話しているアニメーション -->
+    <div id="grandma">
+        <img src="/static/grandma.png" alt="おばあちゃんのイラスト" id="grandma-img" width="150">
+    </div>
+
     <div id="story"></div>
     <audio id="audio" controls></audio>
 
     <script>
         document.getElementById('generate').addEventListener('click', async () => {
+            const ancestor = document.getElementById('ancestor').value || "あなたの祖先";
+            const mood = document.getElementById('mood').value;
+
+            // スピナー、メッセージ、おばあちゃんを表示
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('message').innerText = 'おばあちゃんが物語を作っています... 少々お待ちください。';
+            const grandmaImg = document.getElementById('grandma-img');
+            grandmaImg.classList.add('talking');
+            document.getElementById('grandma').style.display = 'block';
+
             const response = await fetch('/generate-story', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ prompt: '盛岡にまつわる昔話をしてください' })
+                body: JSON.stringify({ ancestor: ancestor, mood: mood })
             });
+
             const data = await response.json();
+
+            // スピナーとメッセージを隠す
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('message').innerText = '';
+
+            // 物語と音声を表示
             document.getElementById('story').innerText = data.story;
             const audio = document.getElementById('audio');
             audio.src = data.audioUrl;
             audio.play();
+
+            // おばあちゃんの口アニメーションを止める（物語が終了したらアニメーションを外す）
+            audio.onended = () => {
+                grandmaImg.classList.remove('talking');
+            };
         });
     </script>
 </body>
