@@ -5,15 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>昔話AIおばあちゃん</title>
     <style>
+        /* 全体のスタイル設定 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        input, select, button {
+            font-size: 1em;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input, select {
+            width: 60%;
+            max-width: 300px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
         /* ローディングスピナーのスタイル */
         #loading {
             display: none;
-            border: 16px solid #f3f3f3;
-            border-top: 16px solid #3498db;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
             border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
+            width: 80px;
+            height: 80px;
+            animation: spin 1s linear infinite;
             margin: 20px auto;
         }
 
@@ -22,16 +67,16 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* おばあちゃんのイラスト */
+        /* おばあちゃんのイラストのスタイル */
         #grandma {
             display: none;
             text-align: center;
-            margin-top: 20px;
+            margin: 30px auto;
         }
 
         /* おばあちゃんが話しているときのアニメーション */
         .talking {
-            animation: talking 0.5s infinite alternate;
+            animation: talking 0.8s infinite alternate ease-in-out;
         }
 
         @keyframes talking {
@@ -39,9 +84,32 @@
             100% { transform: scale(1.05); }
         }
 
+        /* 物語表示領域のスタイル */
+        #story {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* メッセージ */
         #message {
             text-align: center;
+            font-size: 1.1em;
+            color: #888;
             margin-top: 10px;
+        }
+
+        audio {
+            margin-top: 20px;
+            outline: none;
         }
     </style>
 </head>
@@ -49,17 +117,17 @@
     <h1>おばあちゃんのお話を聴く</h1>
     
     <!-- 祖先と気分の入力フォーム -->
-    <label for="ancestor">祖先を入力してください（例: おじいちゃん、太郎さん）:</label>
-    <input type="text" id="ancestor" placeholder="祖先の名前">
+    <label for="ancestor">祖先を入力してください（例: おじいちゃん、太郎さん）:</label><br>
+    <input type="text" id="ancestor" placeholder="祖先の名前"><br>
     
-    <label for="mood">気分を選んでください:</label>
+    <label for="mood">気分を選んでください:</label><br>
     <select id="mood">
         <option value="普通">普通</option>
         <option value="楽しい">楽しい</option>
         <option value="悲しい">悲しい</option>
-    </select>
+    </select><br>
     
-    <button id="generate">おばあちゃんボタン</button>
+    <button id="generate">お願いおばあちゃん</button>
     
     <!-- ローディングスピナーとメッセージ -->
     <div id="loading"></div>
@@ -67,10 +135,12 @@
     
     <!-- おばあちゃんのイラストと話しているアニメーション -->
     <div id="grandma">
-        <img src="/static/grandma.png" alt="おばあちゃんのイラスト" id="grandma-img" width="150">
+        <img src="/static/grandma.png" alt="おばあちゃんのイラスト" id="grandma-img" width="200">
     </div>
 
-    <div id="story"></div>
+    <!-- 物語表示領域 -->
+    <div id="story">ここに物語が表示されます。</div>
+    
     <audio id="audio" controls></audio>
 
     <script>
