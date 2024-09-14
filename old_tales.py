@@ -30,7 +30,7 @@ def generate_story():
         prompt_mood = "普通"
 
     # プロンプトの生成
-    prompt = f"あなたは私のおばあちゃんの設定で、８００字以内で盛岡にまつわる昔話を、実際の盛岡の地名を加え、{ancestor}が登場する形で{prompt_mood}トーンで話してください。"
+    prompt = f"あなたは私のおばあちゃんです。８００字以内で盛岡の昭和初期の話を、実際にあった地名を加え、私の祖先の{ancestor}が登場する形で{prompt_mood}感じのお話をしてください。"
 
     # ChatGPTに物語を生成させる
     response = client.chat.completions.create(

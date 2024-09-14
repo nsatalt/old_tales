@@ -117,12 +117,12 @@
     <h1>おばあちゃんのお話を聴く</h1>
     
     <!-- 祖先と気分の入力フォーム -->
-    <label for="ancestor">祖先を入力してください（例: おじいちゃん、太郎さん）:</label><br>
+    <label for="ancestor">誰のお話をしてもらいますか？（例: おじいちゃん、太郎さん）:</label><br>
     <input type="text" id="ancestor" placeholder="祖先の名前"><br>
     
-    <label for="mood">気分を選んでください:</label><br>
+    <label for="mood">どんな感じの物語にしますか？:</label><br>
     <select id="mood">
-        <option value="普通">普通</option>
+        <option value="普通の">普通</option>
         <option value="楽しい">楽しい</option>
         <option value="悲しい">悲しい</option>
     </select><br>
@@ -150,7 +150,7 @@
 
             // スピナー、メッセージ、おばあちゃんを表示
             document.getElementById('loading').style.display = 'block';
-            document.getElementById('message').innerText = 'おばあちゃんが物語を作っています... 少々お待ちください。';
+            document.getElementById('message').innerText = 'おばあちゃんが記憶をたどっています... 少々お待ちください。';
             const grandmaImg = document.getElementById('grandma-img');
             grandmaImg.classList.add('talking');
             document.getElementById('grandma').style.display = 'block';
